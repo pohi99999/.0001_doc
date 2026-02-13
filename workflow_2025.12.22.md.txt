@@ -1,0 +1,43 @@
+# Projekt Összefoglaló
+
+A **Brunella (Orchestrator Asszisztens)** projekt célja a **Gemini CLI** funkcionalitásának teljes körű tükrözése és kiterjesztése egy chat-alapú környezetbe (Gemini App). A rendszer a parancssori interakciót egy természetes nyelvű, "Orchestrator" típusú vezérlésre cseréli, amely **MCP (Model Context Protocol)** szervereken keresztül közvetlenül képes fájlműveletekre, Google Cloud erőforrások kezelésére (pl. Cloud Run deploy), kódvizsgálatra és harmadik féltől származó integrációk (pl. GitHub, Stripe, Workspace) vezérlésére, minimalizálva a manuális beavatkozást.
+
+## Meghozott Döntések és Gondolatmenet
+
+A projekt előkészítése és az architektúra elemzése során az alábbi kulcsfontosságú technikai és stratégiai döntések születtek:
+
+1.  **MCP (Model Context Protocol) Architektúra választása:**
+    * *Döntés:* A monolitikus CLI helyett egy moduláris, MCP-alapú felépítést alkalmazunk.
+    * *Indoklás:* Ez lehetővé teszi, hogy a Brunella ügynök szabványosított interfészen keresztül kommunikáljon bármilyen eszközzel (legyen az `git`, `filesystem` vagy `stripe`), így a rendszer jövőbiztos és könnyen bővíthető (`settings.json` konfiguráció alapján).
+
+2.  **Human-in-the-Loop Biztonsági Protokoll:**
+    * *Döntés:* Minden írási (write), törlési vagy deploy művelet explicit felhasználói jóváhagyáshoz ("Jóváhagyom") kötött.
+    * *Indoklás:* Mivel az Orchestrator magas jogosultsági szinttel rendelkezik (Cloud Run deploy, fájlrendszer módosítás), a véletlen vagy hibás generálások elleni védelem kritikus fontosságú (`GEMINI.md` biztonsági előírásai alapján).
+
+3.  **Kétlépcsős Elemzési Folyamat:**
+    * *Döntés:* A kódmódosításokat egy dedikált "Code Review" fázis előzi meg a `code_review_guide.md` szabályai szerint.
+    * *Indoklás:* A minőségbiztosítás beépítése a generálási folyamatba csökkenti a hibás kód élesbe kerülésének kockázatát, és biztosítja a stilisztikai konzisztenciát (pl. TypeScript strict mode).
+
+4.  **Hibrid Memória és Kontextus Kezelés:**
+    * *Döntés:* A `GEMINI.md` "gyors útmutatóként", míg a Workspace dokumentumok "részletes tudásbázisként" szolgálnak.
+    * *Indoklás:* A token-limitek optimalizálása érdekében a gyakran használt szabályokat a prompt contextben tartjuk, míg a mélyebb dokumentációt igény szerint töltjük be (`File Fetcher` vagy Drive integráció).
+
+## Felhasznált Eszközök és Források
+
+A dokumentáció és a projektstruktúra elemzése során az alábbi eszközök és ügynök-képességek kerültek aktiválásra:
+
+* **Fájlrendszer Elemző (File System Analyzer):** A feltöltött `gemini-cli` repozitórium (`packages/cli`, `packages/core`) struktúrájának és a konfigurációs fájlok (`settings.json`, `.editorconfig`) feldolgozásához.
+* **MCP Kliens Integrációk (Definiált):**
+    * `cloud-run` (Deploy és szolgáltatás menedzsment)
+    * `google-workspace-developer-tools` (Docs, Drive, Gmail kezelés)
+    * `git-tools` (Verziókezelés)
+    * `web_search` (Külső információk validálása)
+* **Google Workspace Erőforrások:**
+    * Drive Mappák (Dokumentáció tárhely)
+    * Google Docs (Jelentéskészítés)
+
+## Végső Fájlok Helye
+
+A generált dokumentációk és a projekt aktuális állapota az alábbi megosztott Google Drive mappában érhető el:
+
+* **Google Drive:** [https://drive.google.com/drive/folders/1dx6ZulMcUkBZBf_3yC_lYsLx2iRq2kG3?usp=sharing](https://drive.google.com/drive/folders/1dx6ZulMcUkBZBf_3yC_lYsLx2iRq2kG3?usp=sharing)
